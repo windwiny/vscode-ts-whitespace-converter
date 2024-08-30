@@ -4,9 +4,11 @@ import {Whitespacer} from './whitespacer';
 
 export function activate(context: ExtensionContext) {
 
-    function convertText(whitespacerFunctionName : string) {
+    async function convertText(whitespacerFunctionName : string) {
         var editor = getActiveEditor();
         var tabSize = Number(editor.options.tabSize);
+        const tabSizes = await window.showInputBox({ prompt: 'tab size', placeHolder: `${tabSize}`, validateInput: value => (/^[\s0-9]+$/.test(value)) ? null : "not number" });
+        tabSize = Number(tabSizes);
 
         var document = editor.document;
         var whitespacer = new Whitespacer();
@@ -50,12 +52,12 @@ export function activate(context: ExtensionContext) {
         }
     }
 
-    context.subscriptions.push(commands.registerCommand('extension.convertTabsToSpaces', () => {
-        convertText('convertTabsToSpaces');
+    context.subscriptions.push(commands.registerCommand('extension.convertTabsToSpaces', async () => {
+        await convertText('convertTabsToSpaces');
     }));
 
-    context.subscriptions.push(commands.registerCommand('extension.convertSpacesToTabs', () => {
-        convertText('convertSpacesToTabs');
+    context.subscriptions.push(commands.registerCommand('extension.convertSpacesToTabs', async () => {
+        await convertText('convertSpacesToTabs');
     }));
 }
 
